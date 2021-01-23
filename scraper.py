@@ -1,4 +1,4 @@
-from requests_html import HTML_session
+from requests_html import HTMLSession
 
 class JobScrape():
 
@@ -10,7 +10,7 @@ class JobScrape():
         """
         
         sites = [{"monster":{
-                    "URL" : "https://www.monster.co.uk/jobs/search",
+                    "url" : "https://www.monster.co.uk/jobs/search",
                     "query_format" : "?q={keywords}&where={city}%2C+{country}",
                     "results" : "#results-page",
         }}]
@@ -34,7 +34,7 @@ class JobScrape():
         Privet methord to scrape the supplied website
         """
 
-        s = HTML_session()
+        s = HTMLSession()
 
         keywords = "+".join(keywords.split(","))
 
