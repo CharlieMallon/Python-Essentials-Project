@@ -15,7 +15,14 @@ class JobScrape():
                     "results": "#ResultsContainer",
                     "not_found": ".pivot.block",
                     "desc_text": "[name=\"sanitizedHtml\"]",
-                    }}]
+                    }},
+                {"indeed":
+                    {"url": "https://ie.indeed.com",
+                    "query_format": "/jobs?q={keywords}&l={city}%2C{country}",
+                    "results": "",
+                    "not_found": ".bad_query",
+                    "desc_text": "#jobDescriptionText"
+                }}]
         
         try:
             self.site_data = [site[site_name] for site in sites if site_name in site][0]
@@ -37,6 +44,35 @@ class JobScrape():
         job_summaries = []
 
         cards = results.find(".card-content .summary")
+
+        for card in cards:
+            job = {}
+            job["title"] = card.find(".title a", first=True).text
+            job["company"] = card.find(".company .name", first=True).text
+            url = card.find(".title a", first=True)
+            job["url"] = url.attrs["href"]
+
+            if desc:
+                job["description"] = self._get_description(url.attrs["href"])
+
+            job_summaries.append(job)
+
+        return job_summaries
+
+    def _format_indeed(self, results, desc):
+        """
+        Non-public method to return job details in this format:
+        [{"title": "",
+            "company": "",
+            "url": "",
+            "description": ""}]
+        Description is optional and can be controlled with the
+        desc parameter
+        """
+
+        job_summaries = []
+
+        cards = results.find("")
 
         for card in cards:
             job = {}

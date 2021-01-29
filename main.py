@@ -1,10 +1,12 @@
 from scraper import JobScrape
 
 mon = JobScrape("monster")
+ind = JobScrape("indeed")
 
 print("Working...")
 
 mon_results = mon.get_jobs("Telford", "uk", "python,developer")
+ind_results = ind.get_jobs("Telford", "uk", "python,developer")
 
 for result in mon_results:
     print(f"Job Title:   {result['title']}")
