@@ -6,3 +6,8 @@ __pycache__/
 *.py[cod]
 .vscode
 venv
+lib
+Scripts
+include
+pyvenv.cfg
+requirements.txt
