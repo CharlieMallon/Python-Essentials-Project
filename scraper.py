@@ -14,6 +14,7 @@ class JobScrape():
                     "query_format": "?q={keywords}&where={city}&cy={country}",
                     "results": "#ResultsContainer",
                     "not_found": ".pivot.block",
+                    "desc_text": "[name=\"sanitizedHtml\"]",
                     }}]
         
         try:
@@ -44,12 +45,26 @@ class JobScrape():
             url = card.find(".title a", first=True)
             job["url"] = url.attrs["href"]
 
+            if desc:
+                job["description"] = self._get_description(url.attrs["href"])
+
             job_summaries.append(job)
 
         return job_summaries
 
-    def _get_description():
-        pass
+    def _get_description(self, url):
+        """
+        Private function to retrieve the job description
+        from a URL
+        """
+
+        s = HTMLSession()
+
+        r = s.get(url)
+
+        result = r.html.find(self.site_data["desc_text"], first = True)
+
+        return result.text if result else "No description available"
 
     def _scrape_site(self, city, country, keywords):
         """
