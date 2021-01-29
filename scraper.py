@@ -22,8 +22,31 @@ class JobScrape():
         except IndexError:
             raise ValueError(f"{site_name} not found or not supported yet!")
 
-    def _format_monster():
-        pass
+    def _format_monster(self, results, desc):
+        """
+        Non-public method to return job details in this format:
+        [{"title": "",
+            "company": "",
+            "url": "",
+            "description": ""}]
+        Description is optional and can be controlled with the
+        desc parameter
+        """
+
+        job_summaries = []
+
+        cards = results.find(".card-content .summary")
+
+        for card in cards:
+            job = {}
+            job["title"] = card.find(".title a", first=True).text
+            job["company"] = card.find(".company .name", first=True).text
+            url = card.find(".title a", first=True)
+            job["url"] = url.attrs["href"]
+
+            job_summaries.append(job)
+
+        return job_summaries
 
     def _get_description():
         pass
@@ -56,7 +79,7 @@ class JobScrape():
         
         jobs = self._scrape_site(city, country, keywords)
 
-        print(jobs.html)
+        # print(jobs.html)
 
         if self.site_name.lower() == "monster":
             return self._format_monster(jobs, desc) if jobs else None
