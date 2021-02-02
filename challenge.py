@@ -77,8 +77,8 @@ class JobScrape():
             job["company"] = card.find(".company", first=True).text
             url = card.find(".title a", first=True)
             job["url"] = url.attrs["href"]
-            if desc:
-                job["description"] = self._get_description(url.attrs["href"])
+            # if desc:
+            #     job["description"] = self._get_description(url.attrs["href"])
 
             job_summaries.append(job)
 
