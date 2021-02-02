@@ -10,19 +10,19 @@ class JobScrape():
         """
 
         sites = [{"monster":
-                     {"url": "https://www.monster.ie/jobs/search/",
-                      "query_format": "?q={keywords}&where={city}&cy={country}",
-                      "results": "#ResultsContainer",
-                      "not_found": ".pivot.block",
-                      "desc_text": "[name=\"sanitizedHtml\"]"
-                  }},
-                 {"indeed":
-                     {"url": "https://ie.indeed.com",
-                      "query_format": "/jobs?q={keywords}&l={city}%2C{country}",
-                      "results": "",
-                      "not_found": ".bad_query",
-                      "desc_text": "#jobDescriptionText"
-                 }}]
+                    {"url": "https://www.monster.ie/jobs/search/",
+                    "query_format": "?q={keywords}&where={city}&cy={country}",
+                    "results": "#ResultsContainer",
+                    "not_found": ".pivot.block",
+                    "desc_text": "[name=\"sanitizedHtml\"]"
+                }},
+                {"indeed":
+                    {"url": "https://ie.indeed.com",
+                    "query_format": "/jobs?q={keywords}&l={city}%2C{country}",
+                    "results": "#resultsCol",
+                    "not_found": ".bad_query",
+                    "desc_text": "#jobDescriptionText"
+                }}]
         
         try:
             self.site_data = [site[site_name] for site in sites if site_name in site][0]
@@ -34,9 +34,9 @@ class JobScrape():
         """
         Non-public method to return job details in this format:
         [{"title": "",
-          "company": "",
-          "url": "",
-          "description": ""}]
+        "company": "",
+        "url": "",
+        "description": ""}]
         Description is optional and can be controlled with the
         desc parameter
         """
@@ -48,6 +48,33 @@ class JobScrape():
             job = {}
             job["title"] = card.find(".title a", first=True).text
             job["company"] = card.find(".company .name", first=True).text
+            url = card.find(".title a", first=True)
+            job["url"] = url.attrs["href"]
+            if desc:
+                job["description"] = self._get_description(url.attrs["href"])
+
+            job_summaries.append(job)
+
+        return job_summaries
+
+    def _format_indeed(self, results, desc):
+        """
+        Non-public method to return job details in this format:
+        [{"title": "",
+        "company": "",
+        "url": "",
+        "description": ""}]
+        Description is optional and can be controlled with the
+        desc parameter
+        """
+        job_summaries = []
+
+        cards = results.find(".jobsearch-SerpJobCard")
+
+        for card in cards:
+            job = {}
+            job["title"] = card.find(".title a", first=True).text
+            job["company"] = card.find(".company", first=True).text
             url = card.find(".title a", first=True)
             job["url"] = url.attrs["href"]
             if desc:
@@ -86,6 +113,7 @@ class JobScrape():
         if r.html.find(self.site_data["not_found"]):
             return None
         else:
+            print(f"{base_url}{query}")
             return r.html.find(self.site_data["results"], first=True)
 
     def get_jobs(self, city, country, keywords, desc=True):
@@ -98,7 +126,12 @@ class JobScrape():
         jobs = self._scrape_site(city, country, keywords)
 
         if self.site_name.lower() == "monster":
-            return self._format_monster(jobs, desc) if jobs else None
+            print("m")
+            return self._format_monster(jobs, desc)
+        elif self.site_name.lower() == "indeed":
+            print("i")
+            return self._format_indeed(jobs, desc) 
+        return None
         
 
 ############################################################################
@@ -108,7 +141,9 @@ class JobScrape():
 ind = JobScrape("indeed")
 print("Working...")
 
-ind_results = ind.get_jobs("dublin", "ireland", "python,django")
+ind_result = ind.get_jobs("dublin", "ireland", "python,django")
+
+ind_result = ind_result[0]
 
 
 ############################################################################
@@ -117,7 +152,7 @@ ind_results = ind.get_jobs("dublin", "ireland", "python,django")
 ############################################################################
 
 try:
-    ind_result = ind_results[0]
+    ind_result = ind_result[0]
 except:
     pass
 
