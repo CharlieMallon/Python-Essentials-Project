@@ -143,7 +143,7 @@ print("Working...")
 
 ind_result = ind.get_jobs("dublin", "ireland", "python,django")
 
-ind_result = ind_result[0]
+ind_results = ind_result[0]
 
 
 ############################################################################
@@ -152,7 +152,7 @@ ind_result = ind_result[0]
 ############################################################################
 
 try:
-    ind_result = ind_result[0]
+    ind_result = ind_results[0]
 except:
     pass
 
