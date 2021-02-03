@@ -34,9 +34,9 @@ class JobScrape():
         """
         Non-public method to return job details in this format:
         [{"title": "",
-        "company": "",
-        "url": "",
-        "description": ""}]
+            "company": "",
+            "url": "",
+            "description": ""}]
         Description is optional and can be controlled with the
         desc parameter
         """
@@ -61,9 +61,9 @@ class JobScrape():
         """
         Non-public method to return job details in this format:
         [{"title": "",
-        "company": "",
-        "url": "",
-        "description": ""}]
+            "company": "",
+            "url": "",
+            "description": ""}]
         Description is optional and can be controlled with the
         desc parameter
         """
@@ -76,9 +76,9 @@ class JobScrape():
             job["title"] = card.find(".title a", first=True).text
             job["company"] = card.find(".company", first=True).text
             url = card.find(".title a", first=True)
-            job["url"] = url.attrs["href"]
-            # if desc:
-            #     job["description"] = self._get_description(url.attrs["href"])
+            job["url"] = "https://ie.indeed.com" + url.attrs["href"]
+            if desc:
+                job["description"] = self._get_description("https://ie.indeed.com" + url.attrs["href"])
 
             job_summaries.append(job)
 
@@ -113,7 +113,6 @@ class JobScrape():
         if r.html.find(self.site_data["not_found"]):
             return None
         else:
-            print(f"{base_url}{query}")
             return r.html.find(self.site_data["results"], first=True)
 
     def get_jobs(self, city, country, keywords, desc=True):
@@ -126,13 +125,10 @@ class JobScrape():
         jobs = self._scrape_site(city, country, keywords)
 
         if self.site_name.lower() == "monster":
-            print("m")
             return self._format_monster(jobs, desc)
         elif self.site_name.lower() == "indeed":
-            print("i")
             return self._format_indeed(jobs, desc) 
         return None
-        
 
 ############################################################################
 # Please add your print statement here. This code is similar to what was   #
@@ -141,9 +137,7 @@ class JobScrape():
 ind = JobScrape("indeed")
 print("Working...")
 
-ind_result = ind.get_jobs("dublin", "ireland", "python,django")
-
-ind_results = ind_result[0]
+ind_results = ind.get_jobs("dublin", "ireland", "python,django")
 
 
 ############################################################################
